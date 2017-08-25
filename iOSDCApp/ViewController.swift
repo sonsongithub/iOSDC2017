@@ -27,6 +27,14 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         
+        do {
+            if let data = stringToBeUnescaped.data(using: .unicode) {
+                _ = try NSAttributedString(data: data, options: [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.html], documentAttributes: nil)
+            }
+        } catch {
+            print(error)
+        }
+        
         testLinePerformance()
         testLinePerformance_NSString()
         
@@ -38,6 +46,8 @@ class ViewController: UIViewController {
         
         testUnescapePerformance()
         testUnescapePerformance_GoogleToolbox()
+        
+        testUnescapePerformance_NSAttributedString()
     }
     
     let testCount = 1000
@@ -149,6 +159,22 @@ class ViewController: UIViewController {
             str = self.stringToBeUnescaped.gtm_stringByUnescapingFromHTML()
         }
         toc()
+    }
+    
+    func testUnescapePerformance_NSAttributedString() {
+        print(#function)
+        var str = ""
+        if let data = stringToBeUnescaped.data(using: .unicode) {
+        tic()
+        for _ in 0..<10 {
+            do {
+                _ = try NSAttributedString(data: data, options: [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.html], documentAttributes: nil)
+            } catch {
+                print(error)
+            }
+        }
+        toc()
+        }
     }
     
 }
